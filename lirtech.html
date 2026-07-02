@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIR TECH — Tecnologia que conecta, soluções que transformam!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0A1128;
+    --navy-2:#0F1E3D;
+    --navy-3:#132952;
+    --blue:#1D6FF2;
+    --blue-light:#4FC3F7;
+    --white:#F5F8FC;
+    --slate:#8CA0C2;
+    --line:rgba(245,248,252,0.12);
+    --green:#22C55E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--navy);
+    color:var(--white);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{font-family:'Sora',sans-serif;font-weight:700;letter-spacing:-0.01em;}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--blue-light);
+  }
+
+  /* Network background */
+  .net-bg{position:absolute;inset:0;z-index:0;opacity:0.5;pointer-events:none;}
+
+  /* Header */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(10,17,40,0.9);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:82px;}
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:36px;height:36px;flex-shrink:0;}
+  .logo-text{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-0.02em;}
+  .logo-text .lir{color:var(--white);}
+  .logo-text .tech{color:var(--blue-light);}
+  nav{display:flex;align-items:center;gap:36px;}
+  nav a.navlink{font-size:0.9rem;color:var(--white);opacity:0.8;transition:opacity .2s;}
+  nav a.navlink:hover{opacity:1;color:var(--blue-light);}
+  .btn{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:0.88rem;
+    padding:13px 26px;border-radius:8px;border:1px solid var(--blue);
+    background:var(--blue);color:#fff;cursor:pointer;
+    transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{background:var(--blue-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,195,247,0.35);}
+  .btn-ghost{background:transparent;color:var(--white);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--blue-light);background:transparent;box-shadow:none;}
+  .menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.6rem;cursor:pointer;}
+
+  /* Hero */
+  .hero{position:relative;padding:36px 0 70px;border-bottom:1px solid var(--line);overflow:hidden;}
+  .hero-banner{
+    width:100%;height:auto;border-radius:16px;border:1px solid var(--line);
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);display:block;
+  }
+  .cart-toggle{position:relative;}
+  .cart-count{
+    background:#fff;color:var(--blue);font-size:0.72rem;font-weight:800;
+    min-width:18px;height:18px;border-radius:50%;display:inline-flex;
+    align-items:center;justify-content:center;padding:0 4px;margin-left:2px;
+  }
+  .cart-overlay{
+    position:fixed;inset:0;background:rgba(4,8,20,0.6);z-index:200;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  .cart-overlay.open{opacity:1;pointer-events:auto;}
+  .cart-drawer{
+    position:fixed;top:0;right:0;height:100vh;width:380px;max-width:90vw;
+    background:var(--navy-2);border-left:1px solid var(--line);z-index:201;
+    display:flex;flex-direction:column;transform:translateX(100%);
+    transition:transform .3s ease;
+  }
+  .cart-drawer.open{transform:translateX(0);}
+  .cart-head{display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid var(--line);}
+  .cart-head h3{font-size:1.1rem;}
+  .cart-close{background:none;border:none;color:var(--white);font-size:1.2rem;cursor:pointer;}
+  .cart-items{flex:1;overflow-y:auto;padding:20px 24px;}
+  .cart-empty{color:var(--slate);font-size:0.9rem;}
+  .cart-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .cart-item .ci-info{flex:1;}
+  .cart-item .ci-name{font-size:0.92rem;font-weight:600;}
+  .cart-item .ci-price{font-size:0.8rem;color:var(--slate);margin-top:2px;}
+  .cart-item .ci-qty{display:flex;align-items:center;gap:8px;}
+  .cart-item .ci-qty button{
+    width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;
+    color:var(--white);cursor:pointer;font-size:0.9rem;line-height:1;
+  }
+  .cart-item .ci-qty button:hover{border-color:var(--blue-light);}
+  .cart-item .ci-remove{background:none;border:none;color:var(--slate);cursor:pointer;font-size:1rem;}
+  .cart-item .ci-remove:hover{color:#EF4444;}
+  .cart-foot{padding:20px 24px 24px;border-top:1px solid var(--line);}
+  .cart-total-row{display:flex;justify-content:space-between;font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:16px;}
+  .cart-checkout{width:100%;justify-content:center;}
+  .cart-checkout:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+  .cart-note{font-size:0.75rem;color:var(--slate);margin-top:12px;text-align:center;}
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--blue);color:#fff;padding:12px 22px;border-radius:8px;font-size:0.88rem;
+    font-weight:600;z-index:300;opacity:0;pointer-events:none;transition:all .25s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* Stats strip */
+  .stats{border-bottom:1px solid var(--line);background:var(--navy-2);}
+  .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);padding:38px 32px;}
+  .stat{border-left:1px solid var(--line);padding-left:22px;}
+  .stat:first-child{border-left:none;padding-left:0;}
+  .stat .num{font-family:'Sora',sans-serif;font-size:2rem;font-weight:800;color:var(--blue-light);}
+  .stat .label{font-size:0.8rem;color:var(--slate);margin-top:4px;}
+
+  section{padding:100px 0;}
+  .section-head{max-width:620px;margin-bottom:56px;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);margin-top:12px;}
+  .section-head p{color:var(--slate);margin-top:14px;}
+
+  /* Products */
+  .products{border-top:1px solid var(--line);}
+  .prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .prod-card{
+    background:var(--navy-2);border:1px solid var(--line);border-radius:14px;
+    padding:26px 22px;transition:transform .25s ease, border-color .25s ease;
+  }
+  .prod-card:hover{transform:translateY(-6px);border-color:var(--blue);}
+  .prod-thumb{
+    height:130px;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 40%, rgba(29,111,242,0.25), transparent 70%);
+    border-radius:10px;margin-bottom:18px;
+  }
+  .prod-thumb svg{width:64px;height:64px;}
+  .prod-card .cat{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--blue-light);letter-spacing:0.08em;text-transform:uppercase;}
+  .prod-card h3{font-size:1.02rem;margin:8px 0 6px;font-weight:600;}
+  .prod-card .desc{font-size:0.84rem;color:var(--slate);margin-bottom:14px;min-height:38px;}
+  .prod-card .price-row{display:flex;align-items:center;justify-content:space-between;}
+  .prod-card .price{font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:var(--white);}
+  .prod-card .price small{font-size:0.68rem;color:var(--slate);font-weight:400;}
+  .add-btn{
+    background:transparent;border:1px solid var(--blue);color:var(--blue-light);
+    width:38px;height:38px;border-radius:8px;cursor:pointer;font-size:1.1rem;
+    display:flex;align-items:center;justify-content:center;transition:all .2s ease;
+  }
+  .add-btn:hover{background:var(--blue);color:#fff;}
+
+  /* Services list */
+  .services{background:var(--navy-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .svc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .svc{background:var(--navy-2);padding:34px 20px;text-align:center;transition:background .25s ease;}
+  .svc:hover{background:var(--navy-3);}
+  .svc svg{width:34px;height:34px;margin:0 auto 16px;}
+  .svc h3{font-size:0.95rem;font-weight:600;margin-bottom:8px;}
+  .svc p{font-size:0.8rem;color:var(--slate);}
+
+  /* Why choose us */
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .why-card{border:1px solid var(--line);border-radius:14px;padding:30px;background:rgba(255,255,255,0.015);}
+  .why-card svg{width:30px;height:30px;margin-bottom:16px;}
+  .why-card h3{font-size:1.05rem;margin-bottom:8px;}
+  .why-card p{font-size:0.9rem;color:var(--slate);}
+
+  /* Testimonial */
+  .testimonial{background:linear-gradient(135deg, var(--navy-3) 0%, var(--navy) 70%);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .t-card{background:var(--navy-2);border:1px solid var(--line);border-radius:12px;padding:26px;}
+  .t-card .stars{color:var(--blue-light);font-size:0.9rem;margin-bottom:12px;}
+  .t-card p{font-size:0.92rem;color:var(--white);opacity:0.85;margin-bottom:16px;}
+  .t-card .who{font-size:0.82rem;color:var(--slate);}
+
+  /* CTA band */
+  .cta-band{background:linear-gradient(90deg, var(--blue) 0%, #1450B8 100%);}
+  .cta-band .wrap{display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;}
+  .cta-band h2{font-size:clamp(1.5rem,3vw,2rem);max-width:20ch;color:#fff;}
+  .cta-band p{color:rgba(255,255,255,0.85);margin-top:8px;}
+  .cta-band .btn{background:#fff;color:var(--navy);border-color:#fff;}
+  .cta-band .btn:hover{background:var(--navy-2);color:#fff;border-color:var(--navy-2);}
+
+  /* Footer */
+  footer{padding:60px 0 0;}
+  .foot-top{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:32px;padding-bottom:44px;border-bottom:1px solid var(--line);}
+  footer h4{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+  footer ul{list-style:none;}
+  footer li{margin-bottom:10px;font-size:0.9rem;color:var(--white);opacity:0.85;}
+  footer li a:hover{color:var(--blue-light);}
+  .foot-contact-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+  .foot-contact-row svg{width:20px;height:20px;flex-shrink:0;color:var(--blue-light);}
+  .foot-contact-row .lbl{font-size:0.72rem;color:var(--slate);}
+  .foot-contact-row .val{font-size:0.92rem;font-weight:600;}
+  .social-row{display:flex;gap:12px;margin-top:6px;}
+  .social-row a{
+    width:36px;height:36px;border:1px solid var(--line);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;transition:all .2s ease;
+  }
+  .social-row a:hover{border-color:var(--blue-light);background:var(--navy-3);}
+  .social-row svg{width:16px;height:16px;}
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    padding:24px 0;color:var(--slate);font-size:0.8rem;
+  }
+
+  @media (max-width: 900px){
+    nav{
+      position:fixed;top:82px;left:0;right:0;background:var(--navy);
+      flex-direction:column;align-items:flex-start;gap:0;border-bottom:1px solid var(--line);
+      max-height:0;overflow:hidden;transition:max-height .3s ease;
+    }
+    nav.open{max-height:420px;}
+    nav a.navlink{width:100%;padding:16px 32px;border-bottom:1px solid var(--line);}
+    nav .btn{margin:16px 32px;}
+    .menu-toggle{display:block;}
+    .hero-grid{grid-template-columns:1fr;}
+    .service-icons{grid-template-columns:repeat(3,1fr);}
+    .stats .wrap{grid-template-columns:repeat(2,1fr);row-gap:26px;}
+    .prod-grid{grid-template-columns:repeat(2,1fr);}
+    .svc-grid{grid-template-columns:repeat(2,1fr);}
+    .why-grid{grid-template-columns:1fr;}
+    .t-grid{grid-template-columns:1fr;}
+    .foot-top{grid-template-columns:1fr 1fr;}
+    section{padding:64px 0;}
+  }
+  @media (max-width:520px){
+    .prod-grid{grid-template-columns:1fr;}
+    .service-icons{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="wrap">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 6 L8 34 L16 34" stroke="#4FC3F7" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 6 L20 6 C25 6 28 9 28 14 C28 19 25 22 20 22 L8 22" stroke="#1D6FF2" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 22 L30 34" stroke="#1D6FF2" stroke-width="4.5" stroke-linecap="round"/>
+      </svg>
+      <div class="logo-text"><span class="lir">LIR</span> <span class="tech">TECH</span></div>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+    <nav id="navMenu">
+      <a class="navlink" href="#produtos">Produtos</a>
+      <a class="navlink" href="#servicos">Serviços</a>
+      <a class="navlink" href="#porque">Porquê nós</a>
+      <a class="navlink" href="#contacto">Contacto</a>
+      <button class="btn btn-ghost cart-toggle" id="cartToggle" type="button">🛒 Carrinho <span class="cart-count" id="cartCount">0</span></button>
+    </nav>
+  </div>
+</header>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>O seu carrinho</h3>
+    <button class="cart-close" id="cartClose" aria-label="Fechar carrinho">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty" id="cartEmpty">O seu carrinho está vazio. Adicione produtos para continuar.</p>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span id="cartTotal">0 MT</span>
+    </div>
+    <button class="btn cart-checkout" id="cartCheckout" type="button">💬 Finalizar pedido pelo WhatsApp</button>
+    <p class="cart-note">Ao finalizar, o pedido será enviado por WhatsApp para confirmarmos disponibilidade e entrega.</p>
+  </div>
+</aside>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <img src="banner.png" alt="LIR TECH — Soluções em tecnologia para você e sua empresa" class="hero-banner">
+    <div class="hero-cta-row">
+      <a class="btn" href="#produtos">🛒 Ver produtos</a>
+      <a class="btn btn-ghost" href="https://wa.me/258868581810" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="wrap">
+    <div class="stat"><div class="num">500+</div><div class="label">Equipamentos vendidos</div></div>
+    <div class="stat"><div class="num">300+</div><div class="label">Clientes satisfeitos</div></div>
+    <div class="stat"><div class="num">24h</div><div class="label">Suporte via WhatsApp</div></div>
+    <div class="stat"><div class="num">5</div><div class="label">Áreas de atuação</div></div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="produtos">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Loja</span>
+      <h2>Produtos em destaque</h2>
+      <p>Equipamentos com garantia e suporte técnico incluído.</p>
+    </div>
+    <div class="prod-grid">
+      <div class="prod-card">
+        <div class="prod-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.4"><rect x="2" y="4" width="20" height="13" rx="1.5"/><path d="M8 21h8M12 17v4" stroke-linecap="round"/></svg>
+        </div>
+        <span class="cat">Computadores</span>
+        <h3>Laptop Ultra 15"</h3>
+        <div class="desc">Intel Core i5, 8GB RAM, 512GB SSD — ideal para trabalho e estudo.</div>
+        <div class="price-row">
+          <div class="price">45.000 MT <small>à vista</small></div>
+          <button class="add-btn" data-name="Laptop Ultra 15&quot;" data-price="45000" aria-label="Adicionar ao carrinho">+</button>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.4"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="16" r="3"/><path d="M9 6h6" stroke-linecap="round"/></svg>
+        </div>
+        <span class="cat">Computadores</span>
+        <h3>Desktop Gamer PC</h3>
+        <div class="desc">Ryzen 5, 16GB RAM, RTX, alto desempenho para jogos e design.</div>
+        <div class="price-row">
+          <div class="price">78.000 MT <small>à vista</small></div>
+          <button class="add-btn" data-name="Desktop Gamer PC" data-price="78000" aria-label="Adicionar ao carrinho">+</button>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="1"/></svg>
+        </div>
+        <span class="cat">Segurança</span>
+        <h3>Câmara Wi-Fi 360°</h3>
+        <div class="desc">Visão noturna, deteção de movimento e acesso remoto pelo telemóvel.</div>
+        <div class="price-row">
+          <div class="price">3.500 MT <small>unidade</small></div>
+          <button class="add-btn" data-name="Câmara Wi-Fi 360°" data-price="3500" aria-label="Adicionar ao carrinho">+</button>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.4"><rect x="3" y="9" width="18" height="6" rx="2"/><circle cx="7" cy="18" r="1.4" fill="#4FC3F7"/><circle cx="12" cy="18" r="1.4" fill="#4FC3F7"/></svg>
+        </div>
+        <span class="cat">Redes</span>
+        <h3>Router Wi-Fi 6</h3>
+        <div class="desc">Cobertura ampla e alta velocidade para casa e escritório.</div>
+        <div class="price-row">
+          <div class="price">4.200 MT <small>unidade</small></div>
+          <button class="add-btn" data-name="Router Wi-Fi 6" data-price="4200" aria-label="Adicionar ao carrinho">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="servicos">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Serviços</span>
+      <h2>Tudo o que a sua empresa precisa, num só lugar</h2>
+    </div>
+    <div class="svc-grid">
+      <div class="svc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><rect x="2" y="4" width="20" height="13" rx="1.5"/><path d="M8 21h8M12 17v4" stroke-linecap="round"/></svg>
+        <h3>Venda de equipamentos</h3>
+        <p>Computadores, periféricos e acessórios com garantia.</p>
+      </div>
+      <div class="svc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 1 5.4-5.4l-3-3z" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        <h3>Assistência técnica</h3>
+        <p>Diagnóstico e reparação rápida de hardware e software.</p>
+      </div>
+      <div class="svc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9s1.3-6.4 3.8-9z"/></svg>
+        <h3>Redes e conectividade</h3>
+        <p>Instalação de redes cabeadas e Wi-Fi para casa e escritório.</p>
+      </div>
+      <div class="svc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/></svg>
+        <h3>Segurança digital</h3>
+        <p>Câmaras, antivírus e proteção de dados para seu negócio.</p>
+      </div>
+      <div class="svc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><path d="M2 8l10-4 10 4-10 4-10-4z" stroke-linejoin="round"/><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" stroke-linejoin="round"/></svg>
+        <h3>Cursos e treinamentos</h3>
+        <p>Capacitação em informática básica e ferramentas digitais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="porque">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Porquê a LIR TECH</span>
+      <h2>Qualidade que você confia</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Garantia em todos os produtos</h3>
+        <p>Equipamentos originais, com garantia e suporte pós-venda.</p>
+      </div>
+      <div class="why-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>
+        <h3>Atendimento rápido</h3>
+        <p>Resposta em minutos via WhatsApp e visitas técnicas agendadas.</p>
+      </div>
+      <div class="why-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><path d="M3 21l6-6M13 3l8 8-4 4-8-8 4-4z" stroke-linejoin="round"/></svg>
+        <h3>Preço justo</h3>
+        <p>Qualidade acessível, sem comprometer o desempenho.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonial">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Clientes</span>
+      <h2>O que dizem sobre nós</h2>
+    </div>
+    <div class="t-grid">
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <p>Comprei o desktop e o atendimento foi excelente do início ao fim. Recomendo!</p>
+        <div class="who">— Cliente, Maputo</div>
+      </div>
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <p>Instalaram a rede Wi-Fi do meu escritório em poucas horas. Muito profissionais.</p>
+        <div class="who">— Cliente empresarial</div>
+      </div>
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <p>As câmaras de segurança funcionam perfeitamente e o suporte é rápido.</p>
+        <div class="who">— Cliente residencial</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="wrap">
+    <div>
+      <h2>Pronto para equipar sua casa ou empresa?</h2>
+      <p>Fale connosco agora pelo WhatsApp e receba um orçamento rápido.</p>
+    </div>
+    <a class="btn" href="https://wa.me/258868581810" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contacto">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">
+          <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 6 L8 34 L16 34" stroke="#4FC3F7" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 6 L20 6 C25 6 28 9 28 14 C28 19 25 22 20 22 L8 22" stroke="#1D6FF2" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 22 L30 34" stroke="#1D6FF2" stroke-width="4.5" stroke-linecap="round"/>
+          </svg>
+          <div class="logo-text"><span class="lir">LIR</span> <span class="tech">TECH</span></div>
+        </div>
+        <p style="color:var(--slate);font-size:0.9rem;max-width:30ch;">Tecnologia que conecta, soluções que transformam!</p>
+        <div class="social-row">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#4FC3F7"><path d="M13 22v-8h2.6l.4-3H13V9.2c0-.9.3-1.5 1.6-1.5H16V5.1C15.6 5 14.6 5 13.5 5 11.1 5 9.5 6.4 9.5 9v2H7v3h2.5v8h3.5z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#4FC3F7" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="#4FC3F7"><path d="M15 3v10.5a2.5 2.5 0 1 1-2.5-2.5H13V8.9a5.5 5.5 0 1 0 4 5.3V9.5c1 .6 2 .9 3 .9V7.4c-1.7 0-3-1-3-2.4V3h-2z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="#produtos">Produtos</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#porque">Porquê nós</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Serviços</h4>
+        <ul>
+          <li><a href="#servicos">Venda de equipamentos</a></li>
+          <li><a href="#servicos">Assistência técnica</a></li>
+          <li><a href="#servicos">Redes e conectividade</a></li>
+          <li><a href="#servicos">Segurança digital</a></li>
+          <li><a href="#servicos">Cursos e treinamentos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <div class="foot-contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z"/></svg>
+          <div><div class="lbl">Fale connosco</div><div class="val">868 581 810</div></div>
+        </div>
+        <div class="foot-contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div><div class="lbl">WhatsApp</div><div class="val">868 581 810</div></div>
+        </div>
+        <div class="foot-contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6l10 7 10-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><div class="lbl">E-mail</div><div class="val">lirtech1@gmail.com</div></div>
+        </div>
+        <div class="foot-contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div><div class="lbl">Localização</div><div class="val">Moçambique</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 LIR TECH. Todos os direitos reservados.</span>
+      <span>Feito com dedicação em Moçambique 🇲🇿</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const toggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('navMenu');
+  toggle.addEventListener('click', () => nav.classList.toggle('open'));
+  nav.querySelectorAll('a.navlink').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+
+  // ---- Cart logic ----
+  const WHATSAPP_NUMBER = '258868581810';
+  let cart = [];
+
+  const cartToggle = document.getElementById('cartToggle');
+  const cartDrawer = document.getElementById('cartDrawer');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartClose = document.getElementById('cartClose');
+  const cartItemsEl = document.getElementById('cartItems');
+  const cartEmptyEl = document.getElementById('cartEmpty');
+  const cartTotalEl = document.getElementById('cartTotal');
+  const cartCountEl = document.getElementById('cartCount');
+  const cartCheckoutBtn = document.getElementById('cartCheckout');
+
+  function fmtMT(n){
+    return n.toLocaleString('pt-PT') + ' MT';
+  }
+
+  function openCart(){
+    cartDrawer.classList.add('open');
+    cartOverlay.classList.add('open');
+  }
+  function closeCart(){
+    cartDrawer.classList.remove('open');
+    cartOverlay.classList.remove('open');
+  }
+  cartToggle.addEventListener('click', openCart);
+  cartClose.addEventListener('click', closeCart);
+  cartOverlay.addEventListener('click', closeCart);
+
+  function addToCart(name, price){
+    const existing = cart.find(i => i.name === name);
+    if(existing){
+      existing.qty += 1;
+    } else {
+      cart.push({name, price, qty: 1});
+    }
+    renderCart();
+    showToast(name + ' adicionado ao carrinho');
+  }
+
+  function changeQty(name, delta){
+    const item = cart.find(i => i.name === name);
+    if(!item) return;
+    item.qty += delta;
+    if(item.qty <= 0){
+      cart = cart.filter(i => i.name !== name);
+    }
+    renderCart();
+  }
+
+  function removeItem(name){
+    cart = cart.filter(i => i.name !== name);
+    renderCart();
+  }
+
+  function renderCart(){
+    const totalItems = cart.reduce((s,i) => s + i.qty, 0);
+    cartCountEl.textContent = totalItems;
+
+    if(cart.length === 0){
+      cartItemsEl.innerHTML = '';
+      cartItemsEl.appendChild(cartEmptyEl);
+      cartCheckoutBtn.disabled = true;
+    } else {
+      cartCheckoutBtn.disabled = false;
+      cartItemsEl.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="ci-info">
+            <div class="ci-name">${item.name}</div>
+            <div class="ci-price">${fmtMT(item.price)} x ${item.qty} = ${fmtMT(item.price * item.qty)}</div>
+          </div>
+          <div class="ci-qty">
+            <button data-action="dec" data-name="${item.name}" aria-label="Diminuir">−</button>
+            <span>${item.qty}</span>
+            <button data-action="inc" data-name="${item.name}" aria-label="Aumentar">+</button>
+            <button class="ci-remove" data-action="remove" data-name="${item.name}" aria-label="Remover">🗑</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    cartTotalEl.textContent = fmtMT(total);
+  }
+
+  cartItemsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if(!btn) return;
+    const name = btn.dataset.name;
+    if(btn.dataset.action === 'inc') changeQty(name, 1);
+    if(btn.dataset.action === 'dec') changeQty(name, -1);
+    if(btn.dataset.action === 'remove') removeItem(name);
+  });
+
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.name;
+      const price = parseInt(btn.dataset.price, 10);
+      addToCart(name, price);
+      openCart();
+    });
+  });
+
+  cartCheckoutBtn.addEventListener('click', () => {
+    if(cart.length === 0) return;
+    let msg = 'Olá LIR TECH! Gostaria de encomendar:%0A%0A';
+    cart.forEach(item => {
+      msg += `• ${item.name} — Qtd: ${item.qty} — ${fmtMT(item.price * item.qty)}%0A`;
+    });
+    const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    msg += `%0ATotal: ${fmtMT(total)}%0A%0APor favor confirmem disponibilidade e entrega.`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+  });
+
+  // ---- Toast ----
+  let toastTimer;
+  function showToast(text){
+    let toast = document.getElementById('toast');
+    if(!toast){
+      toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.id = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = text;
+    clearTimeout(toastTimer);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  renderCart();
+</script>
+
+</body>
+</html>
